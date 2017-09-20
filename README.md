@@ -15,9 +15,15 @@ There is some debate about the proper flag to pass. Is [GENERIC_READ](https://ms
 C:\src\GetPath\Debug>pushd \\machine\c$\tools
 
 Z:\Tools>C:\src\getpath\Debug\GetPath.exe Z:\Tools
-Testing flag 0x00000000 with Z:\Tools
-GetFinalPathNameByHandleW returned: \\?\C:\Tools
-Testing flag 0x80000000 with Z:\Tools
-GetFinalPathNameByHandleW returned: \\?\C:\Tools
+GetPath testing GetFinalPathNameByHandleW calls against Z:\tools
+
+First test: don't open file first, just try to get the path
+        GetPath: Testing access flags 0x00000000 with Z:\Tools
+        GetPath: GetFinalPathNameByHandleW returned: \\?\C:\Tools
+        GetPath: Testing access flags 0x80000000 with z:\Tools
+        GetPath: GetFinalPathNameByHandleW returned: \\?\C:\Tools
+...
 ```
 Clearly for this path, either 0 or GENERIC_READ worked. This may not be true for all network devices.
+
+The initial test is followed by a series of tests where we first open the file with varying levels of access before calling the GetPath routine, to see how having another handle open on the file affects our CreateFileW and GetFinalPathNameByHandleW calls.
